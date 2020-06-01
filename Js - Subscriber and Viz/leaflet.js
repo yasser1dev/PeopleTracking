@@ -51,6 +51,7 @@ function onConnectionLost(responseObject) {
     }
   }
 
+
   locations = [];
   data = {};
   refreshHeat = null;
@@ -62,13 +63,16 @@ function onMessageArrived(message) {
     obj = JSON.parse(message.payloadString);
     console.log(obj);
 
+    var markerIcon = L.icon({
+        iconUrl: 'mark.png',
+        iconSize: [20, 20]
+        });
     
     if(!(obj.id in data)) {
         if(obj.speed >= 2) {
             data[obj.id] = [obj.latitude, obj.longitude]; // ---heat version---
             locations.push(data[obj.id]); // ---heat version---
-            //marker = L.marker([obj.latitude, obj.longitude]).addTo(mymap); // +++marker version+++
-            //data[obj.id] = marker; // +++marker version+++
+            showMarkers(data,obj,mymap,markerIcon);// +++marker version+++
         }
     }
     else {
@@ -80,6 +84,7 @@ function onMessageArrived(message) {
             locations.push(data[obj.id]); // ---heat version---
             //marker = L.marker([obj.latitude, obj.longitude]).addTo(mymap); // +++marker version+++
             //data[obj.id] = marker; // +++marker version+++
+            showMarkers(data,obj,mymap,markerIcon);
         }
     }
     
@@ -94,7 +99,26 @@ function onMessageArrived(message) {
         refreshHeat = L.heatLayer(locations).addTo(mymap); 
     }
     
+        console.log(mymap.getZoom())
+        if (mymap.getZoom() <16){
 
+            for(var key in data){
+                mymap.removeLayer(data[key]);
+            }
+               
+        }
+        else {
+            for(var key in data){
+                mymap.addLayer(data[key]);
+            }
+        }
+
+
+    function showMarkers(data,obj,mymap,markerIcon){
+            marker = L.marker([obj.latitude, obj.longitude],{icon:markerIcon}).addTo(mymap); // +++marker version+++
+            data[obj.id] = marker; // +++marker version+++
+
+    }
     //console.log(locations);
     //console.log(data);
     

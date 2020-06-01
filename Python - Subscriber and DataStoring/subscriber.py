@@ -14,9 +14,6 @@ conn = sqlite3.connect(dbName)
 curs = conn.cursor()
 
 
-def getData(tablName, columnName):
-    return
-
 
 def insertData(data):
     jsonData = json.loads(data)
@@ -67,22 +64,7 @@ def process_data(data):
             data["speed"].append(speed)
             data["id_device"].append(id_device)
 
-    df = pd.DataFrame(data)
-    data_viz(df)
 
-
-def data_viz(dataFrame):
-    '''
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    !!!!!!!! Still need to figure out how to display the map once for all while data can change dynamically !!!!!!!!
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    '''
-    m = folium.Map([33.32, -7.35])
-    # convert to (n, 2) nd-array format for heatmap
-    stationArr = dataFrame[['latitude', 'longitude']].as_matrix()
-
-    # plot heatmap
-    m.add_children(plugins.HeatMap(stationArr, radius=2))
 
 
 
