@@ -65,25 +65,26 @@ function onMessageArrived(message) {
     
     if(!(obj.id in data)) {
         if(obj.speed >= 2) {
-            //data[obj.id] = [obj.latitude, obj.longitude]; // ---heat version---
-            //locations.push(data[obj.id]); // ---heat version---
-            marker = L.marker([obj.latitude, obj.longitude]).addTo(mymap); // +++marker version+++
-            data[obj.id] = marker; // +++marker version+++
+            data[obj.id] = [obj.latitude, obj.longitude]; // ---heat version---
+            locations.push(data[obj.id]); // ---heat version---
+            //marker = L.marker([obj.latitude, obj.longitude]).addTo(mymap); // +++marker version+++
+            //data[obj.id] = marker; // +++marker version+++
         }
     }
     else {
-        //locations = locations.filter(function(value, index, arr) { return value != data[obj.id]}); // ---heat version---
-        mymap.removeLayer(data[obj.id]); // +++marker version+++
+        locations = locations.filter(function(value, index, arr) { return value != data[obj.id]}); // ---heat version---
+        //mymap.removeLayer(data[obj.id]); // +++marker version+++
 
         if(obj.speed >= 2) {
-            //data[obj.id] = [obj.latitude, obj.longitude]; // ---heat version---
-            //locations.push(data[obj.id]); // ---heat version---
-            marker = L.marker([obj.latitude, obj.longitude]).addTo(mymap); // +++marker version+++
-            data[obj.id] = marker; // +++marker version+++
+            data[obj.id] = [obj.latitude, obj.longitude]; // ---heat version---
+            locations.push(data[obj.id]); // ---heat version---
+            //marker = L.marker([obj.latitude, obj.longitude]).addTo(mymap); // +++marker version+++
+            //data[obj.id] = marker; // +++marker version+++
         }
     }
+    
+    
 
-/*
                                     // ---heat version---  
     if(refreshHeat == null) {
         refreshHeat = L.heatLayer(locations).addTo(mymap); 
@@ -92,30 +93,11 @@ function onMessageArrived(message) {
         mymap.removeLayer(refreshHeat);
         refreshHeat = L.heatLayer(locations).addTo(mymap); 
     }
-    */
+    
 
-    console.log(locations);
-    console.log(data);
+    //console.log(locations);
+    //console.log(data);
     
      
     
   }
-
-/*mapMarkers = [];
-
-  // called when a message arrives
-function onMessageArrived(message) {
-    console.log("onMessageArrived:"+message.payloadString);
-
-    obj = JSON.parse(message.payloadString);
-    console.log(obj);
-
-    for(var i = 0; i < mapMarkers.length; i++) {
-        mymap.removeLayer(mapMarkers[i])
-    }
-
-    marker = L.marker([obj.latitude, obj.longitude]).addTo(mymap);
-    mapMarkers.push(marker);
-    
-  }
-  */
