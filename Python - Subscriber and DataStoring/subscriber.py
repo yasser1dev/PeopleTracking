@@ -2,13 +2,7 @@ import paho.mqtt.client as mqtt
 import sqlite3
 import json
 
-import folium
-from folium import plugins
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 
-'''
 dbName = "PeopleTracking.db"
 conn = sqlite3.connect(dbName)
 curs = conn.cursor()
@@ -32,58 +26,6 @@ def insertData(data):
         print("------- Data Inserted ---------")
     except sqlite3.Error as e:
         print(e)
-'''
-
-data = dict()
-data["latitude"] = list()
-data["longitude"] = list()
-data["time"] = list()
-data["speed"] = list()
-data["id_device"] = list()
-
-
-def process_data(data):
-    jsonData = json.loads(data)
-    latitude = float(jsonData["latitude"])
-    longitude = float(jsonData["longitude"])
-    time = jsonData["time"]
-    speed = float(jsonData["speed"])
-    id_device = jsonData["id"]
-
-    if id_device not in data["id_device"]:
-        if speed >= 1.4:
-            data["latitude"].append(latitude)
-            data["longitude"].append(longitude)
-            data["time"].append(time)
-            data["speed"].append(speed)
-            data["id_device"].append(id_device)
-    else:
-        data = data.set_index("id_device")
-        data.drop(id_device, axis=0)
-        if speed >= 1.4:
-            data["latitude"].append(latitude)
-            data["longitude"].append(longitude)
-            data["time"].append(time)
-            data["speed"].append(speed)
-            data["id_device"].append(id_device)
-
-    df = pd.DataFrame(data)
-    data_viz(df)
-
-
-def data_viz(dataFrame):
-    '''
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    !!!!!!!! Still need to figure out how to display the map once for all while data can change dynamically !!!!!!!!
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    '''
-    m = folium.Map([33.32, -7.35])
-    # convert to (n, 2) nd-array format for heatmap
-    stationArr = dataFrame[['latitude', 'longitude']].as_matrix()
-
-    # plot heatmap
-    m.add_children(plugins.HeatMap(stationArr, radius=2))
-
 
 
 
@@ -99,11 +41,11 @@ def on_message(mosq, obj, msg):
     # this is the Master call for saving MQTT Date into DB
     print("MQTT Data Received ...")
     print("MQTT Topic: " + msg.topic)
-    # print("MQTT Message: " + str(msg.payload))
+    #print("MQTT Message: " + str(msg.payload))
     jsonData = str(msg.payload).split("'")[1]
     print("Data: " + jsonData)
-    # insertData(jsonData)
-    process_data(jsonData)
+
+    insertData(jsonData)
 
 
 def on_subscribe(mosq, obj, mid, granted_qos):
