@@ -1,7 +1,5 @@
 import paho.mqtt.client as mqtt
-import sqlite3
 import json
-import mysql.connector
 import MySQLdb
 
 '''
@@ -12,9 +10,10 @@ curs = conn.cursor()
 
 db = MySQLdb.connect(
     host = "localhost",
+    port = 3308,
     user = "root",
     passwd = "",
-    db = "people_tracking"
+    db = "people_tracking_db"
 )
 curs = db.cursor()
 
@@ -26,7 +25,7 @@ def insertData(data):
     latitude = jsonData["latitude"]
     longitude = jsonData["longitude"]
     Date_time = jsonData["time"]
-    speed = float(jsonData["speed"])
+    speed = jsonData["speed"]
     citizen_id = jsonData["id"]
     try:
 

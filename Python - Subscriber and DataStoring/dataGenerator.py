@@ -35,8 +35,8 @@ def publishDataToMqtt():
     gpsData['latitude'] = round(random.uniform(33.580000, 33.588888), 6)
     gpsData['longitude'] = round(random.uniform(-7.600000, -7.610000), 6)
     gpsData['time'] = str(datetime.now())
-    gpsData['speed'] = str(random.randint(1, 5))
-    gpsData['id'] = str(random.randint(1, 500))
+    gpsData['speed'] = float((random.randint(1, 5)))
+    gpsData['id'] = random.randint(1, 500)
     gpsJsonData = json.dumps(gpsData)
 
     publishToTopic(MQTT_Topic,gpsJsonData)
