@@ -8,7 +8,7 @@
         <version>2.3.0.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>org.ensetm</groupId>
+    <groupId>org.enset</groupId>
     <artifactId>serviceweb</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>serviceweb</name>
@@ -59,7 +59,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
     </dependencies>
 
     <build>

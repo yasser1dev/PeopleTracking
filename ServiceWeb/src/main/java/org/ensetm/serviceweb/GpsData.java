@@ -1,5 +1,5 @@
 package org.ensetm.serviceweb;
-
+/*
 import com.google.gson.JsonObject;
 import org.eclipse.paho.client.mqttv3.*;
 import org.springframework.web.bind.annotation.*;
@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
-@RestController
+*/
+/*@RestController
 @RequestMapping("/apiData")
 public class GpsData {
 
@@ -59,4 +59,4 @@ public class GpsData {
         topic2.publish(message);
 
     }
-}
+}*/
