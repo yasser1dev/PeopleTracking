@@ -45,6 +45,7 @@ def on_message(mosq, obj, msg):
     insertData(jsonData)
 
 
+    
 def on_subscribe(mosq, obj, mid, granted_qos):
     pass
 
