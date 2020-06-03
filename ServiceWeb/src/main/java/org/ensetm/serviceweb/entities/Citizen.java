@@ -23,6 +23,8 @@ public class Citizen implements Serializable {
     @Column(length = 15)
     private String ville;
     private String numTele;
+    @Column(unique = true)
+    private String id_device;
     @OneToMany(mappedBy = "citizen")
     private Collection<GpsLog> gpsLogCollection;
 }

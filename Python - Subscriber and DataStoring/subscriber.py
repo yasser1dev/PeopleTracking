@@ -1,29 +1,41 @@
 import paho.mqtt.client as mqtt
 import sqlite3
 import json
+import mysql.connector
+import MySQLdb
 
-
+'''
 dbName = "PeopleTracking.db"
 conn = sqlite3.connect(dbName)
 curs = conn.cursor()
+'''
+
+db = MySQLdb.connect(
+    host = "localhost",
+    user = "root",
+    passwd = "",
+    db = "people_tracking"
+)
+curs = db.cursor()
+
 
 
 
 def insertData(data):
     jsonData = json.loads(data)
-    latitude = float(jsonData["latitude"])
-    longitude = float(jsonData["longitude"])
+    latitude = jsonData["latitude"]
+    longitude = jsonData["longitude"]
     Date_time = jsonData["time"]
     speed = float(jsonData["speed"])
-    id_device = jsonData["id"]
+    citizen_id = jsonData["id"]
     try:
-        sql = """insert into movementData(latitude,longitude,Date_time,speed,id_device) values(?,?,?,?,?)"""
-        curs.execute(sql, [latitude, longitude, Date_time, speed, id_device])
-        conn.commit()
-        print("------- Data Inserted ---------")
-    except sqlite3.Error as e:
-        print(e)
 
+        sql = """insert into gps_log(latitude,longitude,date_time,speed,citizen_id) values(%s,%s ,%s ,%s,%s)"""
+        curs.execute(sql, [latitude, longitude, Date_time, speed,citizen_id])
+        db.commit()
+        print("------- Data Inserted ---------")
+    except MySQLdb.Error as e:
+        print(e)
 
 
 def on_connect(mosq, obj, rc):
@@ -38,19 +50,19 @@ def on_message(mosq, obj, msg):
     # this is the Master call for saving MQTT Date into DB
     print("MQTT Data Received ...")
     print("MQTT Topic: " + msg.topic)
-    #print("MQTT Message: " + str(msg.payload))
+    # print("MQTT Message: " + str(msg.payload))
     jsonData = str(msg.payload).split("'")[1]
     print("Data: " + jsonData)
 
     insertData(jsonData)
 
 
-    
 def on_subscribe(mosq, obj, mid, granted_qos):
     pass
 
 
 # MQTT Settings
+
 MQTT_Broker = "mqtt.eclipse.org"
 MQTT_Port = 1883
 Keep_alive_interval = 30
@@ -65,3 +77,14 @@ mqttc.connect(MQTT_Broker, int(MQTT_Port), int(Keep_alive_interval))
 mqttc.subscribe((MQTT_Topic, 0))
 
 mqttc.loop_forever()  # Continue the network loop
+
+broker = 'mqtt.localdomain'
+broker_port = 1883
+broker_topic = '/test/location/#'
+#broker_clientid = 'mqttuide2mysqlScript'
+#mysql config
+mysql_server = 'thebeast.localdomain'
+mysql_username = 'root'
+mysql_passwd = ''
+mysql_db = 'mqtt'
+#change table below.

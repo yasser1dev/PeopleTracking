@@ -19,7 +19,6 @@ public class GpsLog implements Serializable {
     private double longitude;
     private Date dateTime;
     private double speed;
-    private String idDevice;
     @ManyToOne
     private Citizen citizen;
 }
