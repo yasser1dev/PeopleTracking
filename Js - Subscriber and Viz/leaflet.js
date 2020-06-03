@@ -55,7 +55,8 @@ function onConnectionLost(responseObject) {
   locations = [];
   data = {};
   refreshHeat = null;
-
+  markers={};
+  markersNotUnique=[];
   // called when a message arrives
 function onMessageArrived(message) {
     console.log("onMessageArrived:"+message.payloadString);
@@ -63,16 +64,12 @@ function onMessageArrived(message) {
     obj = JSON.parse(message.payloadString);
     console.log(obj);
 
-    var markerIcon = L.icon({
-        iconUrl: 'mark.png',
-        iconSize: [20, 20]
-        });
     
     if(!(obj.id in data)) {
         if(obj.speed >= 2) {
             data[obj.id] = [obj.latitude, obj.longitude]; // ---heat version---
             locations.push(data[obj.id]); // ---heat version---
-            showMarkers(data,obj,mymap,markerIcon);// +++marker version+++
+            showMarkers(markers,locations[locations.length-1],obj,mymap);
         }
     }
     else {
@@ -84,7 +81,7 @@ function onMessageArrived(message) {
             locations.push(data[obj.id]); // ---heat version---
             //marker = L.marker([obj.latitude, obj.longitude]).addTo(mymap); // +++marker version+++
             //data[obj.id] = marker; // +++marker version+++
-            showMarkers(data,obj,mymap,markerIcon);
+            showMarkers(markers,locations[locations.length-1],obj,mymap);
         }
     }
     
@@ -102,21 +99,31 @@ function onMessageArrived(message) {
         console.log(mymap.getZoom())
         if (mymap.getZoom() <16){
 
-            for(var key in data){
-                mymap.removeLayer(data[key]);
-            }
+            markersNotUnique.forEach(marker => {
+                mymap.removeLayer(marker);
+            });
                
         }
         else {
-            for(var key in data){
-                mymap.addLayer(data[key]);
+            markersNotUnique.forEach(marker => {
+                mymap.removeLayer(marker);
+            });
+            
+            for(var key in markers){
+                mymap.addLayer(markers[key])
             }
         }
 
 
-    function showMarkers(data,obj,mymap,markerIcon){
-            marker = L.marker([obj.latitude, obj.longitude],{icon:markerIcon}).addTo(mymap); // +++marker version+++
-            data[obj.id] = marker; // +++marker version+++
+    function showMarkers(markers,location,obj,mymap){
+            marker = L.marker([location[0],location[1]])
+            .bindPopup(obj.id)
+            .openPopup().addTo(mymap); // +++marker version+++
+            markers[obj.id] = marker; // +++marker version+++
+
+            markersNotUnique.push(marker)
+
+            
 
     }
     //console.log(locations);
