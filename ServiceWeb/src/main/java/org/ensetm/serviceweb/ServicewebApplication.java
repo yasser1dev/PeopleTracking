@@ -19,6 +19,6 @@ public class ServicewebApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-       dataInit.initCitizens();
-    }
+
+     }
 }
