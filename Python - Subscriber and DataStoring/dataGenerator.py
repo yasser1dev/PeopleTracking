@@ -2,10 +2,13 @@ import threading
 import paho.mqtt.client as mqtt
 import json
 import random
+import pandas as pd
 from datetime import datetime
 
 MQTT_BROKER="mqtt.eclipse.org"
 MQTT_Topic = "ENSETM/BDCC2/S4/IotBigData/PeopleTracking"
+
+DATE_LIST = pd.date_range(end = datetime.today(), periods=10).to_pydatetime().tolist()
 
 MQTT_Port = 1883
 Keep_Alive_Interval = 30
@@ -34,7 +37,7 @@ def publishDataToMqtt():
     gpsData = {}
     gpsData['latitude'] = round(random.uniform(33.580000, 33.588888), 6)
     gpsData['longitude'] = round(random.uniform(-7.600000, -7.610000), 6)
-    gpsData['time'] = str(datetime.now())
+    gpsData['time'] = str(random.choice(DATE_LIST))
     gpsData['speed'] = float((random.randint(1, 5)))
     gpsData['id'] = random.randint(1, 500)
     gpsJsonData = json.dumps(gpsData)

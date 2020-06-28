@@ -26,3 +26,8 @@ body {
 .validation {
   color: red;
 }
+
+.table-wrap {
+  height: 150px;
+  overflow-y: auto;
+}

@@ -114,21 +114,21 @@ function onMessageArrived(message) {
             }
         }
 
-
-    function showMarkers(markers,location,obj,mymap){
-            marker = L.marker([location[0],location[1]])
-            .bindPopup(obj.id)
-            .openPopup().addTo(mymap); // +++marker version+++
-            markers[obj.id] = marker; // +++marker version+++
-
-            markersNotUnique.push(marker)
-
-            
-
-    }
     //console.log(locations);
     //console.log(data);
     
      
     
   }
+
+  function showMarkers(markers,location,obj,mymap){
+    marker = L.marker([location[0],location[1]])
+    .bindPopup(obj.id)
+    .openPopup().addTo(mymap); // +++marker version+++
+    markers[obj.id] = marker; // +++marker version+++
+
+    markersNotUnique.push(marker)
+
+    
+
+}
