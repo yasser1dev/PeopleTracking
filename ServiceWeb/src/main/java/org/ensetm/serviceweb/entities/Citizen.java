@@ -1,6 +1,7 @@
 package org.ensetm.serviceweb.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,5 +27,6 @@ public class Citizen implements Serializable {
     @Column(unique = true)
     private String id_device;
     @OneToMany(mappedBy = "citizen")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Collection<GpsLog> gpsLogCollection;
 }

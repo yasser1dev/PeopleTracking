@@ -27,7 +27,7 @@ def insertData(data):
     longitude = jsonData["longitude"]
     Date_time = jsonData["time"]
     speed = float(jsonData["speed"])
-    citizen_id = jsonData["id"]
+    citizen_id = int(jsonData["id"])
     try:
 
         sql = """insert into gps_log(latitude,longitude,date_time,speed,citizen_id) values(%s,%s ,%s ,%s,%s)"""
