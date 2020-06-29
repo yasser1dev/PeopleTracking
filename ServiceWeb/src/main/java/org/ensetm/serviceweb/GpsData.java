@@ -19,6 +19,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/apiData")
+@CrossOrigin("*")
 public class GpsData {
     @Autowired
     IGpsLogRepository gpsLogRepository;
@@ -26,7 +27,7 @@ public class GpsData {
     ICitizensRepository citizensRepository;
     Processing dataProcessing;
     Citizen target;
-    List<Object> contacts;
+    Set<Citizen> contacts = new HashSet<>();
     JSONObject json;
 
     @PostMapping("/log")
@@ -78,7 +79,9 @@ public class GpsData {
 
 
     @GetMapping("/getContacts/{idCitizen}/{nbrJour}")
-    public JSONObject  getContacts(@PathVariable(name = "idCitizen") long id, @PathVariable(name = "nbrJour") int nbrJr) throws ParseException, IOException, ClassNotFoundException, InterruptedException {
+    public JSONObject  getContacts(@PathVariable(name = "idCitizen") Long id, @PathVariable(name = "nbrJour") int nbrJr) throws ParseException, IOException, ClassNotFoundException, InterruptedException {
+        Processing.sickGpsData.clear();
+
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date date=new Date();
         String currentDate=formatter.format(date);
@@ -93,28 +96,31 @@ public class GpsData {
 
         Collection<GpsLog> gpsData=gpsLogRepository.findGpsDataLastDays(date2,date1);
 
-        File fileContact = new File("src/main/resources/input/gpsDataContact.txt");
+        File fileContact = new File("C:\\Users\\oussa\\peopleTracking\\input\\gpsDataContact.txt");
+        if(fileContact.exists()) fileContact.delete();
         FileWriter fwrContact = new FileWriter(fileContact, true);
         BufferedWriter br = new BufferedWriter(fwrContact);
         PrintWriter pr = new PrintWriter(br);
         for(GpsLog gpsDataContact:gpsData){
-            pr.println(gpsDataContact.getId()+","+gpsDataContact.getLatitude()+","+gpsDataContact.getLongitude()+":");
+            pr.println(gpsDataContact.getCitizen().getId()+","+gpsDataContact.getLatitude()+","+gpsDataContact.getLongitude());
         }
         pr.close();
         br.close();
         fwrContact.close();
 
         for(GpsLog gpsLog:gpsData){
-            if(gpsLog.getId()==id) Processing.sickGpsData.add(gpsLog);
+            if(gpsLog.getCitizen().getId().equals(id)) {
+                Processing.sickGpsData.add(gpsLog);
+            }
         }
 
         boolean resultState=ProcessData();
         target=citizensRepository.findById(id).get();
         if (!resultState) System.exit(1);
         else{
-
-            gpsData.forEach((gpsLog)->{
-                if(id==gpsLog.getId()){
+            target.setGpsLogCollection(Processing.sickGpsData);
+            /*gpsData.forEach((gpsLog)->{
+                if(id==gpsLog.getCitizen().getId()){
                     GpsLog g=new GpsLog();
                     g.setId(gpsLog.getId());
                     g.setLongitude(gpsLog.getLongitude());
@@ -123,12 +129,13 @@ public class GpsData {
                     g.setSpeed(gpsLog.getSpeed());
                     target.getGpsLogCollection().add(g);
                 }
-            });
-           contacts=structureData(gpsData);
+            });*/
+           contacts=structureData(gpsData, id);
            //contacts.add(target);
             json = new JSONObject();
             json.put("contacts",contacts);
-            json.put("target",target.getGpsLogCollection());
+            json.put("target",target);
+            json.put("target_logs",target.getGpsLogCollection());
 
         }
         return json;
@@ -138,9 +145,9 @@ public class GpsData {
         return Processing.mapReduce();
     }
 
-    public List<Object> structureData(Collection<GpsLog> gpsData) throws IOException {
-        List<Long> idContactList = new ArrayList<>();
-        List<Object> contacts = new ArrayList<>();
+    public Set<Citizen> structureData(Collection<GpsLog> gpsData, Long id) throws IOException {
+        Set<Long> idContactList = new HashSet<>();
+        Set<Citizen> contacts = new HashSet<>();
 
         File file = new File(Processing.outputFile + "/part-r-00000");
         BufferedReader br1 = new BufferedReader(new FileReader(file));
@@ -151,10 +158,12 @@ public class GpsData {
             idContactList.add(idContact);
         }
 
+        br1.close();
+
         idContactList.forEach((idContact) -> {
-            gpsData.forEach((gpsLog) -> {
-                if (gpsLog.getId() == idContact) contacts.add(gpsLog);
-            });
+            if(!idContact.equals(id)) {
+                contacts.add(citizensRepository.findById(idContact).get());
+            }
         });
 
         return contacts;

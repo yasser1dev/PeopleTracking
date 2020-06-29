@@ -21,20 +21,20 @@ public class MapperTokenizer extends Mapper<Object, Text,Text, IntWritable> {
 
     public void map(Object object, Text value, Mapper.Context context) throws IOException, InterruptedException {
         String line=value.toString();
-        for(String s:SEPARATORLine.split(line)){
-            String[] data=SEPARATOR.split(s);
+        //for(String s:SEPARATORLine.split(line)){
+            String[] data=SEPARATOR.split(line);
             for(GpsLog gpsLogData:Processing.sickGpsData){
                 //System.out.println("id:"+gpsLogData.getId()+" , lat:"+gpsLogData.getLatitude()+" ,long:"+gpsLogData.getLongitude());
                 double distance=calculateDistance(gpsLogData.getLatitude(),Double.valueOf(data[1]),gpsLogData.getLongitude(),Double.valueOf(data[2]));
                 citizensId.set(data[0]);
-                if(distance<1){
+                if(distance<100){
                     context.write(citizensId, one);
                 }
 
-                System.out.println("id:"+data[0]+" , lat:"+data[1]+" ,long:"+data[2]+" distance:"+distance);
+                //System.out.println("id:"+data[0]+" , lat:"+data[1]+" ,long:"+data[2]+" distance:"+distance);
             }
 
-        }
+        //}
 
     }
 
