@@ -40,14 +40,14 @@ client.connect({
 // called when the client connects
 function onConnect() {
     // Once a connection has been made, make a subscription and send a message.
-    console.log("onConnect");
+    //console.log("onConnect");
     client.subscribe("ENSETM/BDCC2/S4/IotBigData/PeopleTracking");
   }
 
   // called when the client loses its connection
 function onConnectionLost(responseObject) {
     if (responseObject.errorCode !== 0) {
-      console.log("onConnectionLost:"+responseObject.errorMessage);
+      //console.log("onConnectionLost:"+responseObject.errorMessage);
     }
   }
 
@@ -59,10 +59,10 @@ function onConnectionLost(responseObject) {
   markersNotUnique=[];
   // called when a message arrives
 function onMessageArrived(message) {
-    console.log("onMessageArrived:"+message.payloadString);
+    //console.log("onMessageArrived:"+message.payloadString);
 
     obj = JSON.parse(message.payloadString);
-    console.log(obj);
+    //console.log(obj);
 
     
     if(!(obj.id in data)) {
@@ -96,7 +96,7 @@ function onMessageArrived(message) {
         refreshHeat = L.heatLayer(locations).addTo(mymap); 
     }
     
-        console.log(mymap.getZoom())
+        //console.log(mymap.getZoom())
         if (mymap.getZoom() <16){
 
             markersNotUnique.forEach(marker => {
